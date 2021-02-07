@@ -1,0 +1,204 @@
+Props and state are the two ways to manipulate DOM . Props are properties
+ passed down from parent component to child.
+ while state are managed by the Component itslef.
+#####################################################
+setState 
+is a method to handle state in a class.
+Takes an object and merges the state of the class.
+Other fields remain the same.
+this.state is the variable from the Component , and only single object 
+to manage class state.
+
+useState -
+It is a hook. All hooks starts with use and are from react library.
+handles the state of functional components.
+A function have multiple useState.
+takes an object with original state and can have a function 
+to manipulate the state.
+returns an array with the current state of the function  , and function that manipulates the state.
+so use array destucturing to do it.
+It doesnt merge with the original state , rather overrides it. So the states that we 
+dont want to manipulate should be re-written.
+
+############################################################
+two way binding , pass the change method 
+from parent to the child as refernce in component prop.In the child call
+ the onChange and output the props property that being changed as state.
+ In the parent method change the state using the event object.event.target.value
+ 
+ jsx restrictions are 
+ can't return multiple elements , has to a single element.
+ some words of html cant be used , because it is not html , but js. ex-className 
+ should be used instead of class.
+ 
+ use curly braces to put js things in the jsx and use simple statements . 
+ like ternary expression will work , but not the if else condition(block statemments)
+ 
+ ###########################################################################
+ render method is always called , for any state or prop change.So any consitional
+ statement write it in this render method. create a local(let variable) and change 
+ it with if else.
+ 
+ Higher oreder cmponent- component wrapping the current component in export stateent.
+ ':hover' is a pseudo selector.
+ 
+ use radium for psuedo selectors and media queries.
+
+################################################################## 
+Use ErrorBoundary  way of rendering error or actual contenet.
+-It wraps the original source class
+-In map method theoutermost component should hold the key.
+-componentDidCatch is the method to watch out for. it gets the error and other info and 
+uses it.
+server errors handling would be a good option here.
+###################################################################
+functional component for - presenttion , retrun div or list etc.
+container components for state change of the presentation components.
+######################################################################
+Life cycle hooks - creation- for only class based components
+1.constructor 2.getDerivedStateFromProps (change state when props change)
+3.render()  -  this is the method for jsx return.   
+4. render child components and their lifecycle hooks.
+till here we cant haveside-effect thngs , like http calls ,or settimeout etc , cause performance hit.
+5.componentDidMount - call http calls. but dont set state directly. (only if it is a then of a Promise).
+
+Component updation -
+1.getDerivedStateFromProps - get the updated proops and change
+the state
+2.shouldComponentUpdate(nextprops, nextState) - can be used to stop the current update
+3.render() 4. childcomponent life cycle.
+4.getSnapshotBeforeUpdate - get the previous state and props of the component right 
+before the update . (scroll position before dom change)
+5.componentDidUpdate - dont set state here , - dont update component here.
+ fine to set state of async task , but not promise then? dont call synchronously. 
+these are fired when the proops to the component change.
+
+State change in a component -
+same as above. 
+------------------------------------------------
+clean up code just before component unmount .
+componentWillUnmount method.
+#################################################################################
+Functional component - lifecycle hooks nt exactly hooks - 
+
+1. useState - takes the initial state and change it according to the changed props.
+similar getDerivedStateFromProps() method. useState takes initial state object.
+[personState,setPersonState] = useState({
+name: "Deepti"
+});
+onChangeHandler=(newName)=>{
+setPersonState (
+{
+name: newName
+})
+}
+2. useEffect - for other lifecycle hooks.
+useEffect(()=>{
+},[props.persons]) ... bydefault this hook takes a default function that would run for every lifecycle 
+method.
+It runs for everyrender cycle . while mounting and updating .all the time.If we want it to render
+at a particular time , then we must use it in the second argument. 
+componentDidUpdate is the case here.
+
+to run only onetime or imulate componentDidMount ,use an empty array.
+
+useEffectcan be used to do the clean up . we can have one more function returned within
+the useEffect function.and write our code. It will run before main useEffect , but after
+first render
+
+#################################################################
+performanece optimization using shouldComponentUpdate ( check the pros and the function(click/change)
+ reference).
+React.memo uses memorize the snapshot of the functional component . It rerenders the 
+if the input changes. So prevents rerendering even when parent component changes.
+PureCompoent can be used instead of Component when we are using shouldComponent to check
+all the properties passed to the component is updated or not.
+
+
+the render method and the jsx return method in react class and  functional component are
+both same . they dont immidiately chnage the actual dom.
+
+How react render works ? Ans - check diagram render1.0
+############################################################
+react adjacent jsx sittting in return statement , 
+using array with comma separated jsx elements and each element having unique keys.
+
+Auxillary or Aux compoent servers the purpose , when we put the jsx elements between 
+Aux component tags. Aux is a higher order component, which takes props and returns
+props.children. <React.Fragment> or <Frament> is inbuit react higher order component works 
+same as AUX.
+
+Higher Order Component - 
+HOCs are the components that wrap other componets. like Aux , Fragment etc.
+namingConvention is - startswith With
+add logics, htmls, styls . One usage is to get the errors from http requests 
+use the above way to write jsx and styling.
+
+other way writing a hoc is using function that returns a functional component. 
+the function takes the first argument is ref to Component(name) you want to wrap  (refernce to it) which is to be wrapped and the other 
+one is the properties that would be used in the HOC compoent.
+const hocFun = (XComponent,cssClassName)=>{
+return props => {
+<div className = cssClassNme>
+<XComponent/>
+</div>
+}
+then wrap the default export original component to be wrapped with the function. and the JSX with Aux component.
+hocFun(XComponent,cssClassName)
+Use this way while using logic.
+
+Aboveexample would notget the props from parent component , because when we pass it , we pass it to the HOC and 
+not to the wrapped component . so to resolve this issue , get the props and in the HOC and pass down them to the 
+wrapped component. either with spread operater , where you spread the props object or pass it as props={props} as a whole
+const hocFun = (XComponent,cssClassName)=>{
+return props => {
+<div className = cssClassNme>
+<XComponent {...props}/>
+</div>
+}
+#####################################################
+this.setState is called sychronously but it is excuted by react when it finds approprate resources to render.
+so basically it is not guranteed it would be executed immidiately.so this.state doesnt the gurantee 
+latest previous state might be some old state. So when we need the last state to update to current state like counter 
+add, then use function which takes prevState  to assign it .
+this.setState((prevState, props)=>{
+persons:persons,
+counter:prevState.counter+1
+})
+#############################################################
+receiving props proerly- propTypes - an instruct to tell the component 
+npm install propTypes --save , 
+Person.propTypes ={
+name:PropTypes.string
+click:PropTypes.func
+}
+#############################################################
+ref -> can be used when we want to get hold of the jsx component and do some html based focus or anything else.
+use = ref={(el)=>el.focus()}
+or ref={(el)=>this.el} , to set a globalll element and then use it in componentDidMount
+
+another way is to us 
+constructor(props){
+super(props);
+this.inputElemetref= React.createRef();
+}
+componentDidMount(){
+this.inputElemetref.current.focus();
+}
+and use this reference in the input element you want to focus using ref tag. ref=this.inputElemetref
+
+##############################################################################
+use UseRef hook to create a ref for dom element and then we can use it to focus etc.
+Context in react helps in getting state from one component to other without passing them through props .
+
+Create a component using(lets say AuthContext) React.createContext , takes object , string etc for initial state.
+AuthContext.provider , takes the value to passed to the consumers.
+AuthContext.consumer , gets the context parameter through anonymous function.
+
+const contextType =AuthContext,  is a more elegant way of using the AuthContext.Consumer. contextType holds the 
+context.
+useContext is a hook , that can be used for functional component for context .Pass the AuthContext to a constant and 
+use it.
+
+#########################################################################################
+
